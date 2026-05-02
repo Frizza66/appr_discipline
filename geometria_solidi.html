@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometria Solida - Terza Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #canvas-container {
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: move;
+        }
+        @media print {
+            header, aside, #canvas-container, footer, .no-print {
+                display: none !important;
+            }
+            main { display: block !important; }
+            .lg\:w-3\/4 { width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white py-8 shadow-lg">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold">Laboratorio di Geometria Solida</h1>
+            <p class="mt-2 text-indigo-100">Strumenti interattivi per la Terza Media</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar: Selezione Solido -->
+        <aside class="lg:w-1/4 no-print">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 sticky top-8">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-700 border-b pb-2">Seleziona Solido</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-bold text-xs text-gray-400 uppercase tracking-widest mb-3">Poliedri</h3>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="updateSolid('cube')" class="w-full text-left px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 hover:text-white border border-indigo-100 transition duration-200">Cubo</button>
+                            <button onclick="updateSolid('prism')" class="w-full text-left px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 hover:text-white border border-indigo-100 transition duration-200">Prisma Retto</button>
+                            <button onclick="updateSolid('pyramid')" class="w-full text-left px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 hover:text-white border border-indigo-100 transition duration-200">Piramide Quadrata</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xs text-gray-400 uppercase tracking-widest mb-3">Solidi di Rotazione</h3>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="updateSolid('cylinder')" class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-600 hover:text-white border border-orange-100 transition duration-200">Cilindro</button>
+                            <button onclick="updateSolid('cone')" class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-600 hover:text-white border border-orange-100 transition duration-200">Cono</button>
+                            <button onclick="updateSolid('sphere')" class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-600 hover:text-white border border-orange-100 transition duration-200">Sfera</button>
+                        </div>
+                    </div>
+
+                    <button onclick="window.print()" class="mt-4 w-full py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">
+                        🖨️ Stampa Formulario
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="lg:w-3/4 space-y-8">
+            
+            <!-- Visualizzatore 3D -->
+            <div class="bg-white p-5 rounded-xl shadow-md border border-gray-200 no-print">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 id="solid-title" class="text-3xl font-bold text-gray-800 tracking-tight">Cubo</h2>
+                        <p id="solid-category" class="text-indigo-600 font-medium text-sm">Poliedro Regolare</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="resetRotation()" class="p-2 text-gray-400 hover:text-indigo-600" title="Reset Vista">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+                <div id="canvas-container"></div>
+                <div class="mt-4 flex justify-center gap-4 text-xs text-gray-400 uppercase font-semibold">
+                    <span>🖱️ Trascina per Ruotare</span>
+                    <span>🔍 Rotellina per Zoom</span>
+                </div>
+            </div>
+
+            <!-- Scheda Didattica -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Caratteristiche -->
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-5 text-gray-800 flex items-center gap-2">
+                        <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                        Caratteristiche
+                    </h3>
+                    <ul id="solid-desc" class="space-y-4 text-gray-600 leading-relaxed">
+                        <!-- Riempito da JS -->
+                    </ul>
+                </div>
+
+                <!-- Formulario -->
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-5 text-gray-800 flex items-center gap-2">
+                        <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
+                        Formulario
+                    </h3>
+                    <div id="solid-formulas" class="space-y-4">
+                        <!-- Riempito da JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-500 py-10 mt-12 no-print">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">Creato per scopi didattici • Matematica Terza Media</p>
+        </div>
+    </footer>
+
+    <script>
+        const solidsData = {
+            cube: {
+                title: "Cubo (Esaedro Regolare)",
+                category: "Poliedro Regolare",
+                desc: [
+                    "Possiede 6 facce quadrate congruenti (uguali).",
+                    "Ha 12 spigoli di uguale lunghezza.",
+                    "Ha 8 vertici.",
+                    "È un prisma regolare in cui l'altezza è uguale al lato di base."
+                ],
+                formulas: `
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Laterale</p>
+                        <p class="text-lg">$A_l = 4 \\cdot s^2$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Totale</p>
+                        <p class="text-lg">$A_t = 6 \\cdot s^2$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Volume</p>
+                        <p class="text-lg">$V = s^3$</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-xs text-gray-500 uppercase">Diagonale del cubo</p>
+                        <p class="text-md font-mono">$d = s \\cdot \\sqrt{3}$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.BoxGeometry(2, 2, 2)
+            },
+            prism: {
+                title: "Prisma Quadrangolare",
+                category: "Poliedro (Prisma Retto)",
+                desc: [
+                    "Le due basi sono poligoni paralleli e congruenti.",
+                    "Le facce laterali sono rettangoli.",
+                    "L'altezza è la distanza tra le due basi.",
+                    "Il volume si calcola moltiplicando l'area di base per l'altezza."
+                ],
+                formulas: `
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Laterale</p>
+                        <p class="text-lg">$A_l = 2p \\cdot h$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Totale</p>
+                        <p class="text-lg">$A_t = A_l + 2 \\cdot A_b$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Volume</p>
+                        <p class="text-lg">$V = A_b \\cdot h$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.BoxGeometry(1.5, 3, 1.5)
+            },
+            pyramid: {
+                title: "Piramide Quadrata",
+                category: "Poliedro",
+                desc: [
+                    "Ha una sola base (un quadrato) e un vertice opposto chiamato apice.",
+                    "Le facce laterali sono triangoli isosceli.",
+                    "L'altezza cade perpendicolarmente nel centro della base.",
+                    "L'apotema è l'altezza di una faccia laterale."
+                ],
+                formulas: `
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Laterale</p>
+                        <p class="text-lg">$A_l = \\frac{2p \\cdot a}{2}$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Area Totale</p>
+                        <p class="text-lg">$A_t = A_l + A_b$</p>
+                    </div>
+                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-400">
+                        <p class="text-sm font-bold text-indigo-800">Volume</p>
+                        <p class="text-lg">$V = \\frac{A_b \\cdot h}{3}$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.ConeGeometry(1.5, 2.5, 4)
+            },
+            cylinder: {
+                title: "Cilindro",
+                category: "Solido di Rotazione",
+                desc: [
+                    "Si ottiene ruotando un rettangolo di 360° attorno a un lato.",
+                    "Ha due basi circolari parallele e congruenti.",
+                    "Lo sviluppo laterale è un rettangolo che ha per base la circonferenza.",
+                    "L'altezza coincide con l'asse di rotazione."
+                ],
+                formulas: `
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Area Laterale</p>
+                        <p class="text-lg">$A_l = 2\\pi r \\cdot h$</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Area Totale</p>
+                        <p class="text-lg">$A_t = A_l + 2\\pi r^2$</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Volume</p>
+                        <p class="text-lg">$V = \\pi r^2 \\cdot h$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.CylinderGeometry(1, 1, 2.5, 32)
+            },
+            cone: {
+                title: "Cono",
+                category: "Solido di Rotazione",
+                desc: [
+                    "Si ottiene ruotando un triangolo rettangolo attorno a un cateto.",
+                    "La base è un cerchio.",
+                    "L'ipotenusa del triangolo generatore si chiama apotema.",
+                    "Il volume è esattamente un terzo di quello di un cilindro equivalente."
+                ],
+                formulas: `
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Area Laterale</p>
+                        <p class="text-lg">$A_l = \\pi r \\cdot a$</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Area Totale</p>
+                        <p class="text-lg">$A_t = A_l + \\pi r^2$</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Volume</p>
+                        <p class="text-lg">$V = \\frac{\\pi r^2 \\cdot h}{3}$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.ConeGeometry(1.2, 2.5, 32)
+            },
+            sphere: {
+                title: "Sfera",
+                category: "Solido di Rotazione",
+                desc: [
+                    "Si ottiene ruotando un semicerchio attorno al suo diametro.",
+                    "Tutti i punti della superficie distano 'r' (raggio) dal centro.",
+                    "Non ha basi, spigoli o vertici.",
+                    "La sezione massima di una sfera è un cerchio massimo."
+                ],
+                formulas: `
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Superficie Sferica</p>
+                        <p class="text-lg">$S = 4\\pi r^2$</p>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                        <p class="text-sm font-bold text-orange-800">Volume</p>
+                        <p class="text-lg">$V = \\frac{4}{3}\\pi r^3$</p>
+                    </div>
+                `,
+                mesh: () => new THREE.SphereGeometry(1.5, 32, 32)
+            }
+        };
+
+        // THREE.JS LOGIC
+        let scene, camera, renderer, currentGroup;
+        const container = document.getElementById('canvas-container');
+
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 5, 5);
+            scene.add(dirLight);
+
+            camera.position.z = 6;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (currentGroup && !isDragging) {
+                    currentGroup.rotation.y += 0.005;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function updateSolid(key) {
+            const data = solidsData[key];
+            
+            document.getElementById('solid-title').innerText = data.title;
+            document.getElementById('solid-category').innerText = data.category;
+            document.getElementById('solid-desc').innerHTML = data.desc.map(d => 
+                `<li class="flex items-start gap-3"><span class="text-indigo-500 mt-1">•</span><span>${d}</span></li>`
+            ).join('');
+            document.getElementById('solid-formulas').innerHTML = data.formulas;
+            
+            if (window.MathJax) MathJax.typeset();
+
+            if (currentGroup) scene.remove(currentGroup);
+            
+            const geometry = data.mesh();
+            const color = (data.category.includes('Rotazione')) ? 0xf97316 : 0x4f46e5;
+            
+            const material = new THREE.MeshPhongMaterial({ 
+                color: color, 
+                shininess: 80, 
+                transparent: true, 
+                opacity: 0.9 
+            });
+            const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.2 });
+            
+            currentGroup = new THREE.Group();
+            currentGroup.add(new THREE.Mesh(geometry, material));
+            currentGroup.add(new THREE.Mesh(geometry, wireMaterial));
+            
+            scene.add(currentGroup);
+        }
+
+        function resetRotation() {
+            if (currentGroup) {
+                currentGroup.rotation.set(0, 0, 0);
+            }
+        }
+
+        // INTERACTION
+        let isDragging = false;
+        let prevMouse = { x: 0, y: 0 };
+
+        container.addEventListener('mousedown', () => isDragging = true);
+        window.addEventListener('mouseup', () => isDragging = false);
+        container.addEventListener('mousemove', (e) => {
+            if (isDragging && currentGroup) {
+                currentGroup.rotation.y += (e.clientX - prevMouse.x) * 0.01;
+                currentGroup.rotation.x += (e.clientY - prevMouse.y) * 0.01;
+            }
+            prevMouse = { x: e.clientX, y: e.clientY };
+        });
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            camera.position.z += e.deltaY * 0.01;
+            camera.position.z = Math.max(3, Math.min(10, camera.position.z));
+        }, { passive: false });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        window.onload = () => {
+            init3D();
+            updateSolid('cube');
+        };
+    </script>
+</body>
+</html>

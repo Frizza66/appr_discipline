@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Greco Pop-Art Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fef08a; /* Giallo Pop */
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Bungee', cursive;
+            text-transform: uppercase;
+        }
+
+        /* Stile Pop Art */
+        .pop-card {
+            background: white;
+            border: 4px solid #000;
+            box-shadow: 8px 8px 0px #ef4444; /* Rosso */
+            transition: transform 0.2s;
+        }
+
+        .pop-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px #3b82f6; /* Blu */
+        }
+
+        .pop-button {
+            background: #3b82f6;
+            color: white;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            font-family: 'Bungee', cursive;
+            transition: all 0.1s;
+        }
+
+        .pop-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .comic-dot {
+            background-image: radial-gradient(#000 10%, transparent 11%);
+            background-size: 10px 10px;
+            opacity: 0.1;
+        }
+
+        /* Canvas styling */
+        canvas {
+            border: 3px solid black;
+            background: #fff;
+            max-width: 100%;
+        }
+
+        .step-active { display: block; }
+        .step-hidden { display: none; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto relative">
+        <!-- Background Dots -->
+        <div class="fixed inset-0 comic-dot pointer-events-none"></div>
+
+        <!-- Header -->
+        <header class="text-center mb-12 relative">
+            <div class="inline-block bg-white border-4 border-black p-4 rotate-1 mb-4">
+                <h1 class="text-5xl md:text-7xl text-red-500">π GRECO</h1>
+                <p class="text-xl font-bold italic">L'infinito in un cerchio!</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="app">
+            
+            <!-- INTRO -->
+            <section id="step-intro" class="pop-card p-6 mb-8">
+                <h2 class="text-3xl text-blue-600 mb-4">Cos'è questo numero strano?</h2>
+                <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1 text-lg leading-relaxed">
+                        Immagina di prendere una lattina di soda. Se misuri la distanza intorno (la <strong>Circonferenza</strong>) e la dividi per la larghezza (il <strong>Diametro</strong>), otterrai sempre lo stesso numero... circa <strong>3,14</strong>! 
+                        <br><br>
+                        È una costante magica che affascina l'umanità da oltre 4000 anni.
+                    </div>
+                    <div class="flex-1 text-center">
+                        <div class="text-9xl text-yellow-500 font-bold drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">π</div>
+                    </div>
+                </div>
+                <div class="mt-8 text-center">
+                    <button onclick="goTo('step-history')" class="pop-button px-8 py-3 text-xl">Inizia il viaggio!</button>
+                </div>
+            </section>
+
+            <!-- HISTORY -->
+            <section id="step-history" class="pop-card p-6 mb-8 step-hidden">
+                <h2 class="text-3xl text-red-600 mb-4">I Detective del Cerchio</h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-black pl-4 py-2">
+                        <h3 class="text-xl">Babilonesi (1900 a.C.)</h3>
+                        <p>Pensavano che π fosse esattamente 3.125. Vicini, ma non troppo!</p>
+                    </div>
+                    <div class="border-l-4 border-black pl-4 py-2 bg-blue-50">
+                        <h3 class="text-xl">Egizi (1650 a.C.)</h3>
+                        <p>Nel Papiro di Rhind, lo calcolavano come circa 3.16.</p>
+                    </div>
+                    <div class="border-l-4 border-black pl-4 py-2 bg-yellow-50">
+                        <h3 class="text-xl">Archimede (250 a.C.)</h3>
+                        <p>Il vero genio! Usò i poligoni per "incastrare" il cerchio e scoprì che π è tra 3.1408 e 3.1428.</p>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-between">
+                    <button onclick="goTo('step-intro')" class="pop-button bg-gray-500 px-6 py-2">Indietro</button>
+                    <button onclick="goTo('step-archimede')" class="pop-button px-8 py-3 text-xl">Prova come Archimede!</button>
+                </div>
+            </section>
+
+            <!-- ARCHIMEDE LAB -->
+            <section id="step-archimede" class="pop-card p-6 mb-8 step-hidden">
+                <h2 class="text-3xl text-blue-600 mb-4">Il Laboratorio di Archimede</h2>
+                <p class="mb-4">Aumenta il numero di lati del poligono. Nota come il perimetro del poligono si avvicina sempre di più alla circonferenza del cerchio!</p>
+                
+                <div class="flex flex-col items-center">
+                    <canvas id="archimedeCanvas" width="400" height="400" class="mb-4"></canvas>
+                    
+                    <div class="w-full max-w-md bg-white p-4 border-2 border-black mb-4">
+                        <label class="block font-bold mb-2">Lati del poligono: <span id="sideCount" class="text-red-600">6</span></label>
+                        <input type="range" id="sideSlider" min="3" max="60" value="6" class="w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 w-full text-center">
+                        <div class="bg-blue-100 p-2 border border-black">
+                            <span class="block text-sm uppercase">Perimetro Poligono</span>
+                            <span id="polyPerim" class="text-xl font-bold">3.000...</span>
+                        </div>
+                        <div class="bg-red-100 p-2 border border-black">
+                            <span class="block text-sm uppercase">Valore Reale π</span>
+                            <span class="text-xl font-bold">3.14159...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button onclick="goTo('step-history')" class="pop-button bg-gray-500 px-6 py-2">Indietro</button>
+                    <button onclick="goTo('step-quiz')" class="pop-button px-8 py-3 text-xl">Sei pronto per la sfida?</button>
+                </div>
+            </section>
+
+            <!-- QUIZ -->
+            <section id="step-quiz" class="pop-card p-6 mb-8 step-hidden">
+                <h2 class="text-3xl text-yellow-500 mb-4">Pop Quiz!</h2>
+                <div id="quiz-container">
+                    <p class="text-xl mb-6" id="question-text">Se il diametro di un cerchio è 10 cm, quanto vale circa la sua circonferenza?</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="checkAnswer(31.4)" class="pop-button bg-white text-black py-4 hover:bg-green-400">31.4 cm</button>
+                        <button onclick="checkAnswer(10)" class="pop-button bg-white text-black py-4 hover:bg-red-400">10 cm</button>
+                        <button onclick="checkAnswer(3.14)" class="pop-button bg-white text-black py-4 hover:bg-red-400">3.14 cm</button>
+                        <button onclick="checkAnswer(62.8)" class="pop-button bg-white text-black py-4 hover:bg-red-400">62.8 cm</button>
+                    </div>
+                </div>
+                <div id="quiz-feedback" class="mt-6 hidden p-4 border-2 border-black text-center font-bold text-xl"></div>
+                <div class="mt-8">
+                    <button onclick="goTo('step-archimede')" class="pop-button bg-gray-500 px-6 py-2">Indietro</button>
+                    <button onclick="location.reload()" class="pop-button bg-purple-500 px-6 py-2 float-right">Ricomincia</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-sm font-bold uppercase tracking-widest">
+            Creato per la Classe 2ª Media • Geometria Pop Art
+        </footer>
+    </div>
+
+    <script>
+        // Navigazione
+        function goTo(stepId) {
+            document.querySelectorAll('section').forEach(s => {
+                s.classList.add('step-hidden');
+            });
+            document.getElementById(stepId).classList.remove('step-hidden');
+            if(stepId === 'step-archimede') {
+                initArchimede();
+            }
+        }
+
+        // Simulazione Archimede
+        const canvas = document.getElementById('archimedeCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('sideSlider');
+        const sideCountLabel = document.getElementById('sideCount');
+        const polyPerimLabel = document.getElementById('polyPerim');
+
+        function drawPolygon(sides) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 150;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Disegna il cerchio (Circonferenza)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ef4444'; // Rosso
+            ctx.lineWidth = 4;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Disegna il poligono (Approssimazione)
+            ctx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const angle = (i * 2 * Math.PI) / sides - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#3b82f6'; // Blu
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Calcolo perimetro "apparente" (rispetto al raggio 1)
+            // Se diametro = 2r, e circonferenza = 2 * r * pi
+            // Allora pi = perimetro / (2r)
+            // Lato del poligono regolare = 2 * r * sin(PI/n)
+            const sideLength = 2 * radius * Math.sin(Math.PI / sides);
+            const totalPerim = sideLength * sides;
+            const piApprox = totalPerim / (2 * radius);
+            
+            sideCountLabel.innerText = sides;
+            polyPerimLabel.innerText = piApprox.toFixed(5);
+        }
+
+        function initArchimede() {
+            drawPolygon(parseInt(slider.value));
+        }
+
+        slider.addEventListener('input', (e) => {
+            drawPolygon(parseInt(e.target.value));
+        });
+
+        // Quiz Logic
+        function checkAnswer(val) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            if(val === 31.4) {
+                feedback.innerText = "ESATTO! Circonferenza = Diametro × π. Quindi 10 × 3.14 = 31.4!";
+                feedback.className = "mt-6 p-4 border-2 border-black text-center font-bold text-xl bg-green-400 text-white";
+            } else {
+                feedback.innerText = "RIPROVA! Ricorda: C = d × π";
+                feedback.className = "mt-6 p-4 border-2 border-black text-center font-bold text-xl bg-red-400 text-white";
+            }
+        }
+    </script>
+</body>
+</html>

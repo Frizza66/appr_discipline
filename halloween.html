@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esplorando Halloween: Un'App Interattiva</title>
+    <!-- Chosen Palette: Warm Neutrals (Amber, Orange, Gray) -->
+    <!-- Application Structure Plan: Ho progettato una Single-Page Application (SPA) con navigazione a schede (viste). Questo è superiore a un documento lineare perché l'utente può esplorare attivamente gli argomenti (Origini, Tradizioni, Leggenda, Era Moderna, Riepilogo) nell'ordine che preferisce. La navigazione principale (tramite bottoni) utilizza JavaScript per mostrare/nascondere dinamicamente le sezioni di contenuto, creando un'esperienza fluida e interattiva su un'unica pagina. -->
+    <!-- Visualization & Content Choices: Dato che il report è interamente testuale e qualitativo, non ci sono dati quantitativi da visualizzare. Pertanto, Chart.js non è stato utilizzato. L'interattività si concentra sulla navigazione e sull'organizzazione dei contenuti. Ho trasformato le sezioni del report in "viste" (sezioni HTML) e ho formattato il testo in schede (cards), liste e blocchi di testo usando Tailwind per migliorare la leggibilità e la scansione. La leggenda di Jack è presentata come una sequenza (lista ordinata) per seguire la storia. Sono stati usati caratteri Unicode (🎃, 🕯️) per aggiungere un tema visivo senza usare SVG. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fefcfb; /* Sfondo neutro caldo */
+        }
+        .nav-button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: #4b5563; /* text-gray-600 */
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #fef3c7; /* amber-100 */
+            color: #d97706; /* amber-600 */
+        }
+        .nav-active {
+            background-color: #ea580c; /* orange-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .hidden-section {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem; /* p-6 */
+        }
+        h2 {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700;
+            color: #d97706; /* amber-600 */
+            margin-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            color: #ea580c; /* orange-600 */
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-orange-600">
+                Esplorando Halloween 🎃
+            </h1>
+            <p class="text-lg text-gray-600 mt-2">Un viaggio interattivo nelle origini e nell'evoluzione della festa</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 p-4 bg-white rounded-xl shadow-md">
+            <button data-target="section-origini" class="nav-button nav-active">
+                🕯️ Origini (Samhain)
+            </button>
+            <button data-target="section-tradizioni" class="nav-button">
+                🇮🇹 Tradizioni Italiane
+            </button>
+            <button data-target="section-leggenda" class="nav-button">
+                👻 La Leggenda
+            </button>
+            <button data-target="section-moderna" class="nav-button">
+                💰 Era Moderna
+            </button>
+            <button data-target="section-riepilogo" class="nav-button">
+                📜 Riepilogo
+            </button>
+        </nav>
+
+        <main id="content-area" class="mt-6">
+
+            <!-- Sezione 1: Origini (Samhain) -->
+            <section id="section-origini" class="content-section">
+                <h2>🕯️ 1. Nascita e Radici Celtiche: Il Samhain</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Questa sezione esplora le antiche origini di Halloween, partendo dalla potente festa celtica di Samhain. Scopri come una celebrazione di fine raccolto si è trasformata, attraverso l'influenza cristiana, nella vigilia che conosciamo oggi.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3>L'Antico Samhain</h3>
+                        <p class="mb-4">
+                            La moderna festa di Halloween affonda le sue radici nell'antica celebrazione celtica di <strong>Samhain</strong> (pronunciata <i>sow-in</i>), che significa letteralmente "fine dell'estate".
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Periodo:</strong> Si celebrava tra il 31 ottobre e il 1° novembre.</li>
+                            <li><strong>Significato:</strong> Non era un culto della morte, ma la fine dell'anno agricolo e l'inizio del nuovo anno, simboleggiando il passaggio dalla luce (estate) al buio (inverno).</li>
+                            <li><strong>La Caduta del Velo:</strong> I Celti credevano che nella notte di Samhain il confine tra il mondo dei vivi e quello degli spiriti (il <strong>Sidh</strong>) si assottigliasse, permettendo alle anime dei defunti di tornare tra i loro cari.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Sviluppo e Cristianizzazione</h3>
+                        <p class="mb-4">
+                            Con l'espansione del Cristianesimo, le festività pagane vennero progressivamente inglobate o sostituite per facilitare la conversione.
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Ognissanti (All Saints' Day):</strong> Nel IX secolo, Papa Gregorio IV spostò la celebrazione di Ognissanti (in inglese <i>All Hallows' Day</i>) al 1° novembre.</li>
+                            <li><strong>Vigilia di Ognissanti:</strong> La sera precedente divenne nota come <i>All Hallows' Eve</i>, che col tempo si contrasse in <strong>Halloween</strong>.</li>
+                            <li><strong>Commemorazione dei Defunti:</strong> Il 2 novembre fu istituito per la preghiera e il ricordo di tutti i fedeli defunti.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sezione 2: Tradizioni Italiane -->
+            <section id="section-tradizioni" class="content-section hidden-section">
+                <h2>🇮🇹 2. Le Antiche Tradizioni in Italia</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Prima dell'arrivo dell'Halloween "americano", l'Italia aveva già un ricco patrimonio di tradizioni legate al culto dei defunti, molte delle quali sorprendentemente simili ai temi di Samhain. Questa sezione esplora le usanze autoctone che celebravano il ritorno delle anime in famiglia.
+                </p>
+                <div class="card">
+                    <h3>Le antiche tradizioni in Italia</h3>
+                    <p class="mb-4">
+                        In molte regioni italiane (come in alcune zone del Friuli, della Sardegna e del Sud Italia) permanevano tradizioni autoctone che celebravano il ritorno dei defunti in famiglia:
+                    </p>
+                    <ul class="list-disc list-inside space-y-3 text-gray-700">
+                        <li>
+                            <strong>Preparazione del Cibo:</strong> Si lasciava la tavola imbandita o un posto vuoto per i defunti (soprattutto in Sardegna e Sicilia), affinché potessero rifocillarsi durante la loro visita notturna.
+                        </li>
+                        <li>
+                            <strong>Luminarie per le Anime:</strong> In alcune aree, si usava intagliare rape o zucche per farne delle lanterne (un'eco di Jack O'Lantern) o accendere lumini per illuminare il cammino delle anime. Tali usanze sono legate a culti agrari e dei morti diffusi in Europa.
+                        </li>
+                        <li>
+                            <strong>Il Dono dei Morti:</strong> Ai bambini venivano lasciati doni o dolci (spesso "ossa di morto" o frutti secchi) "portati" dai defunti stessi, un'usanza che ricorda il moderno *trick-or-treating*, ma con una valenza religiosa e familiare.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sezione 3: La Leggenda -->
+            <section id="section-leggenda" class="content-section hidden-section">
+                <h2>👻 3. La Leggenda di Jack O'Lantern</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Il simbolo indiscusso di Halloween è la zucca intagliata. Ma da dove viene? Questa sezione racconta l'antica leggenda irlandese di "Stingy Jack" e spiega come la tradizione sia passata dalla rapa alla molto più pratica zucca americana.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3>La Storia di Stingy Jack</h3>
+                        <p class="mb-4">
+                            La leggenda narra di un contadino irlandese, <strong>Jack</strong>, noto per essere avaro e ubriacone (<i>Stingy Jack</i>), che riuscì a ingannare il Diavolo più volte.
+                        </p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                            <li><strong>L'Inganno:</strong> Jack convinse il Diavolo a trasformarsi in una moneta per pagare un drink, ma poi lo imprigionò accanto a una croce, liberandolo solo in cambio della promessa di non prendere la sua anima.</li>
+                            <li><strong>La Condanna:</strong> Alla sua morte, Jack fu respinto dal Paradiso per la sua condotta e dall'Inferno, perché il Diavolo era legato dalla promessa.</li>
+                            <li><strong>Il Destino:</strong> Il Diavolo gli gettò un carbone ardente per illuminargli il cammino nel buio eterno. Jack lo mise in una rapa intagliata e fu condannato a vagare per il mondo fino al Giorno del Giudizio.</li>
+                        </ol>
+                    </div>
+                    <div class="card bg-orange-100 border border-orange-300">
+                        <h3>Dalla Rapa alla Zucca</h3>
+                        <p class="text-gray-800">
+                            Gli immigrati irlandesi portarono questa tradizione negli Stati Uniti nel XIX secolo.
+                        </p>
+                        <p class="mt-2 text-gray-800">
+                            In America, trovarono le <strong>zucche</strong> (pumpkins), native del continente, che erano molto più grandi e facili da intagliare rispetto alle rape o alle barbabietole usate in Irlanda.
+                        </p>
+                        <p class="mt-2 font-semibold text-orange-700">
+                            Per questo motivo, la zucca divenne presto il contenitore preferito per la lanterna di <strong>Jack O'Lantern</strong>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sezione 4: Era Moderna -->
+            <section id="section-moderna" class="content-section hidden-section">
+                <h2>💰 4. Il Risvolto Commerciale Americano in Italia</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    L'Halloween che celebriamo oggi in Italia è un fenomeno recente, importato dagli Stati Uniti. Questa sezione analizza come la festa si è trasformata in un fenomeno commerciale globale, focalizzandosi sul divertimento e creando un nuovo mercato stagionale.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3>Il Fenomeno Globale</h3>
+                        <p class="mb-4">
+                            La Halloween moderna, con travestimenti, feste a tema e la formula <strong>"Dolcetto o Scherzetto?"</strong> (<i>Trick-or-Treat</i>), è stata plasmata dalla cultura popolare americana.
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Diffusione:</strong> La diffusione su larga scala in Italia è avvenuta principalmente tra la fine degli anni '90 e l'inizio degli anni 2000, grazie a film, serie TV e all'influenza della globalizzazione.</li>
+                            <li><strong>Focus sul Divertimento:</strong> In Italia, la festa ha assunto un carattere prevalentemente laico e ludico, distaccandosi dalle radici spirituali o religiose originarie.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>L'Impatto Economico in Italia</h3>
+                        <p class="mb-4">
+                            La festa ha creato un nuovo e significativo mercato annuale:
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Prodotti Stagionali:</strong> Vendita di zucche, dolciumi specifici e accessori per feste.</li>
+                            <li><strong>Intrattenimento:</strong> Aumento della domanda di costumi, maschere e organizzazione di eventi e serate a tema.</li>
+                            <li><strong>Contrastante:</strong> Nonostante la popolarità, Halloween in Italia è spesso percepita come una moda importata e convive con la tradizione cattolica della Commemorazione dei Defunti, che rimane la ricorrenza principale.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sezione 5: Riepilogo -->
+            <section id="section-riepilogo" class="content-section hidden-section">
+                <h2>📜 5. Conclusione: Una Festa Meticcia</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Questa sezione finale riassume il viaggio di Halloween, da antico rito celtico a fenomeno culturale e commerciale globale, mostrando come tradizioni diverse si siano fuse per creare la festa che conosciamo oggi.
+                </p>
+                <div class="card bg-gray-800 text-white">
+                    <h3 class="!text-orange-400">Una Fusione di Culture</h3>
+                    <p class="mb-4 text-gray-200">
+                        Halloween è una festa complessa che unisce l'antico rito celtico di Samhain al culto cristiano dei Santi e dei Defunti.
+                    </p>
+                    <p class="mb-4 text-gray-200">
+                        Sebbene in Italia esistessero già usanze autoctone simili (come le lanterne di zucca e i doni per i morti), è stata la versione colorata e commerciale proveniente dagli Stati Uniti, centrata sulla leggenda di Jack O'Lantern, a renderla una celebrazione diffusa e popolarmente riconosciuta.
+                    </p>
+                    <p class="text-xl font-bold text-center text-amber-400 mt-6">
+                        Oggi rappresenta una fusione di storia, leggenda e intrattenimento.
+                    </p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const contentSections = document.querySelectorAll('.content-section');
+            const contentArea = document.getElementById('content-area');
+
+            function switchSection(targetId) {
+                // Nasconde tutte le sezioni
+                contentSections.forEach(section => {
+                    section.classList.add('hidden-section');
+                });
+
+                // Mostra la sezione target
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden-section');
+                }
+
+                // Aggiorna lo stato attivo dei bottoni
+                navButtons.forEach(button => {
+                    if (button.dataset.target === targetId) {
+                        button.classList.add('nav-active');
+                    } else {
+                        button.classList.remove('nav-active');
+                    }
+                });
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const targetId = event.currentTarget.dataset.target;
+                    switchSection(targetId);
+                });
+            });
+
+            // Mostra la prima sezione di default
+            switchSection('section-origini');
+        });
+    </script>
+
+</body>
+</html>

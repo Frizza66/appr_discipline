@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esploratore del Linguaggio Moderno</title>
+    <!-- Chosen Palette: Calm Harmony Neutrals (Beige/Gray-50 base, Soft Blue/Teal accents) -->
+    <!-- Application Structure Plan: SPA con navigazione tematica (sidebar/header) che mostra/nasconde sezioni di contenuto. Questa struttura non sequenziale è stata scelta perché il report è una raccolta di temi di discussione. Questo design permette all'utente (lo studente) di esplorare liberamente i temi che trova più interessanti, piuttosto che essere forzato in una presentazione lineare, promuovendo l'esplorazione e l'interattività. -->
+    <!-- Visualization & Content Choices: Dato che il report è qualitativo, i grafici (Chart.js) sono usati per visualizzare concetti e proporzioni illustrative, non dati numerici reali, per rendere le idee più concrete. Esempio: Tema 3 (Visivo) -> Goal: Mostrare l'importanza relativa degli elementi visivi -> Viz: Grafico a Ciambella (Composizione Messaggio) -> Interaction: Clic sulle sezioni del grafico (non implementato, ma possibile) -> Justification: Un grafico a ciambella rende il concetto di "composizione" immediatamente comprensibile. Tema 6 (Anglicismi) -> Goal: Valutare la comprensione -> Viz: Quiz (HTML/JS) -> Interaction: L'utente seleziona una risposta -> Justification: Un quiz è più coinvolgente di una lista statica. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            background-color: #0c4a6e;
+            color: white;
+            font-weight: 600;
+        }
+        .nav-link:hover:not(.active) {
+            background-color: #f0f9ff;
+            color: #075985;
+        }
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
+        .quiz-option {
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            background-color: #e0f2fe;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+        .quiz-feedback.correct {
+            display: block;
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .quiz-feedback.incorrect {
+            display: block;
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <nav class="w-full md:w-64 bg-white shadow-md md:sticky md:top-0 md:h-screen md:overflow-y-auto">
+            <div class="p-5 border-b">
+                <h1 class="text-xl font-bold text-sky-800">🗣️ Esplora Lingua</h1>
+                <p class="text-sm text-gray-600">Come parliamo oggi</p>
+            </div>
+            <ul class="p-3 space-y-2" id="navigation">
+                <li><a href="#intro" data-target="intro" class="nav-link active flex items-center p-3 rounded-lg"><span class="mr-3">🚀</span> Introduzione</a></li>
+                <li><a href="#fast-text" data-target="fast-text" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">⚡️</span> Testo Veloce</a></li>
+                <li><a href="#visual" data-target="visual" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">🖼️</span> Visivo</a></li>
+                <li><a href="#social" data-target="social" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">📱</span> Social</a></li>
+                <li><a href="#voice" data-target="voice" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">🎤</span> Voce</a></li>
+                <li><a href="#global" data-target="global" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">🌍</span> Global</a></li>
+                <li><a href="#reflection" data-target="reflection" class="nav-link flex items-center p-3 rounded-lg"><span class="mr-3">🤔</span> Riflessioni</a></li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+
+            <!-- Sezione 1: Introduzione -->
+            <section id="intro" class="content-section active">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">Il Linguaggio è Vivo!</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Benvenuto in questa esplorazione. Il linguaggio non è qualcosa di fisso che impari solo sui libri; è come un organismo vivente, che respira, cresce e cambia ogni singolo giorno. Negli ultimi 5 anni, l'evoluzione è stata incredibilmente rapida, e i protagonisti di questo cambiamento siete proprio **voi** e gli strumenti che usate per comunicare.
+                </p>
+                <div class="bg-sky-100 border-l-4 border-sky-500 text-sky-800 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">Obiettivo di questa esplorazione:</h3>
+                    <p>Capire **come** e **perché** il nostro modo di parlare e scrivere è cambiato così tanto dal 2020 ad oggi. Naviga tra le sezioni per scoprire i temi chiave di questa evoluzione.</p>
+                </div>
+            </section>
+
+            <!-- Sezione 2: Testo Veloce (Abbreviazioni) -->
+            <section id="fast-text" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">⚡️ L'Era del "Cmq"</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Scrivere velocemente è diventato essenziale. L'obiettivo non è più la perfezione grammaticale, ma l'efficienza della comunicazione. Questo ha portato a un'esplosione di abbreviazioni e acronimi.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card">
+                        <h3 class="text-xl font-semibold mb-3">1. Abbreviazioni Estreme</h3>
+                        <p class="text-gray-600 mb-4">Forme contratte per massimizzare la velocità di scrittura.</p>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">Cmq</span> <span class="text-gray-700">Comunque</span></li>
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">Xké</span> <span class="text-gray-700">Perché</span></li>
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">K</span> <span class="text-gray-700">Che / Cosa</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card">
+                        <h3 class="text-xl font-semibold mb-3">2. Acronimi Globali</h3>
+                        <p class="text-gray-600 mb-4">Sigle importate dall'inglese, capite ormai quasi ovunque.</p>
+                        <ul class="space-y-2">
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">LOL</span> <span class="text-gray-700">Laugh Out Loud</span></li>
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">POV</span> <span class="text-gray-700">Point of View</span></li>
+                            <li class="flex justify-between items-center"><span class="font-mono text-lg p-2 bg-gray-100 rounded">IDK</span> <span class="text-gray-700">I Don't Know</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Visualizzazione: Il Bilancio della Velocità</h3>
+                    <p class="text-center text-gray-600 mb-4">Questo grafico illustrativo mostra il "costo" e il "beneficio" concettuale delle abbreviazioni.</p>
+                    <div class="chart-container">
+                        <canvas id="fastTextChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">🤔 Domanda di Riflessione:</h3>
+                    <p>Queste abbreviazioni ci rendono la vita più facile, ma c'è un rischio? Ci abituiamo a scrivere male anche nei compiti o nelle email importanti?</p>
+                </div>
+            </section>
+
+            <!-- Sezione 3: Visivo -->
+            <section id="visual" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">🖼️ La Lingua Visiva</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Oggi non comunichiamo solo a parole. Abbiamo un intero vocabolario fatto di immagini, che trasmettono emozioni e reazioni immediate.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center interactive-card">
+                        <span class="text-5xl">😂</span>
+                        <h3 class="text-xl font-semibold my-3">Emoji / Emoticon</h3>
+                        <p class="text-gray-600">Sostituiscono il tono di voce e intere frasi (es. 🙄, 🙏, 😭).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center interactive-card">
+                        <span class="text-5xl">🔄</span>
+                        <h3 class="text-xl font-semibold my-3">GIF</h3>
+                        <p class="text-gray-600">Reazioni animate perfette per un momento specifico, aggiungono umorismo.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg text-center interactive-card">
+                        <span class="text-5xl">🧩</span>
+                        <h3 class="text-xl font-semibold my-3">Meme</h3>
+                        <p class="text-gray-600">Riferimenti culturali che solo chi fa parte del gruppo può capire.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Visualizzazione: Composizione di un Messaggio</h3>
+                    <p class="text-center text-gray-600 mb-4">Come potrebbe essere composto un tipico messaggio in chat oggi (dati illustrativi).</p>
+                    <div class="chart-container" style="max-width: 350px;">
+                        <canvas id="visualChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">🤔 Domanda di Riflessione:</h3>
+                    <p>Se dovessi raccontare la tua giornata usando **solo** emoji, saresti capito da un adulto di 60 anni? Perché la nostra generazione capisce questo linguaggio meglio?</p>
+                </div>
+            </section>
+            
+            <!-- Sezione 4: Social -->
+            <section id="social" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">📱 Il Glossario dei Social</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Piattaforme come TikTok hanno un impatto enorme: le parole nascono, diventano virali e muoiono nel giro di pochi mesi. Un linguaggio "usa e getta".
+                </p>
+                
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Termini Recenti (ultimi 2-3 anni):</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="p-3 bg-sky-100 text-sky-800 rounded-full font-semibold">Trend</span>
+                        <span class="p-3 bg-sky-100 text-sky-800 rounded-full font-semibold">Challenge</span>
+                        <span class="p-3 bg-pink-100 text-pink-800 rounded-full font-semibold">Crush</span>
+                        <span class="p-3 bg-purple-100 text-purple-800 rounded-full font-semibold">Vibe / Vibes</span>
+                        <span class="p-3 bg-gray-100 text-gray-800 rounded-full font-semibold">Main Character</span>
+                        <span class="p-3 bg-gray-100 text-gray-800 rounded-full font-semibold">Side Character</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Visualizzazione: Il Ciclo di Vita di un "Trend"</h3>
+                    <p class="text-center text-gray-600 mb-4">Illustrazione di come una parola social diventa popolare e poi scompare.</p>
+                    <div class="chart-container">
+                        <canvas id="socialChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">🤔 Domanda di Riflessione:</h3>
+                    <p>Queste parole sono divertenti, ma sono "usa e getta"? Quando un *trend* finisce, la parola sparisce? Il linguaggio dei social è come la "fast fashion"?</p>
+                </div>
+            </section>
+            
+            <!-- Sezione 5: Voce -->
+            <section id="voice" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">🎤 Dalla Tastiera al Microfono</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Con gli audio su WhatsApp e Telegram, abbiamo assistito al grande ritorno della voce nelle conversazioni scritte. Questo ha vantaggi e svantaggi.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card border-t-4 border-green-500">
+                        <h3 class="text-2xl font-semibold mb-3">Vantaggi 👍</h3>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong class="text-green-700">Tono:</strong> L'audio permette di esprimere emozioni (felicità, sarcasmo, rabbia) che nel testo si perderebbero.</li>
+                            <li><strong class="text-green-700">Comodità:</strong> È molto più facile e veloce registrare un minuto di audio che scrivere la stessa cosa.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card border-t-4 border-red-500">
+                        <h3 class="text-2xl font-semibold mb-3">Svantaggi 👎</h3>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong class="text-red-700">Tempo:</strong> Chi riceve l'audio deve bloccare tutto per ascoltare (e magari è in pubblico).</li>
+                            <li><strong class="text-red-700">Sintesi:</strong> Spesso gli audio sono pieni di pause, "ehm", e giri di parole, risultando poco sintetici.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Visualizzazione: Testo vs Audio</h3>
+                    <p class="text-center text-gray-600 mb-4">Un confronto concettuale tra i due metodi di comunicazione.</p>
+                    <div class="chart-container">
+                        <canvas id="voiceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">🤔 Domanda di Riflessione:</h3>
+                    <p>Quando preferisci mandare un messaggio scritto e quando un messaggio audio? Qual è il "galateo" per un messaggio audio (es. deve essere breve)?</p>
+                </div>
+            </section>
+
+            <!-- Sezione 6: Global -->
+            <section id="global" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">🌍 English vs. Italiano</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Molte delle parole nuove che usiamo arrivano dall'inglese (anglicismi), specialmente dal mondo della tecnologia e dei videogiochi.
+                </p>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Quiz Interattivo: Riconosci l'Italiano?</h3>
+                    <p class="text-center text-gray-600 mb-6">Quanto sono entrati questi termini nel tuo vocabolario? Prova a trovare l'alternativa italiana.</p>
+                    
+                    <div id="quiz-container">
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold mb-3">1. Qual è l'alternativa italiana a "Scrollare"?</p>
+                            <div class="space-y-2 quiz-options" data-correct="a">
+                                <div class="quiz-option p-3 border rounded-lg" data-option="a">a) Scorrere</div>
+                                <div class="quiz-option p-3 border rounded-lg" data-option="b">b) Girare</div>
+                                <div class="quiz-option p-3 border rounded-lg" data-option="c">c) Muovere</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold mb-3">2. Qual è l'alternativa italiana a "Fake News"?</p>
+                            <div class="space-y-2 quiz-options" data-correct="c">
+                                <div class="quiz-option p-3 border rounded-lg" data-option="a">a) Notizie Vecchie</div>
+                                <div class="quiz-option p-3 border rounded-lg" data-option="b">b) Notizie Divertenti</div>
+                                <div class="quiz-option p-3 border rounded-lg" data-option="c">c) Notizie False / Bufale</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-900 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-2">🤔 Domanda di Riflessione:</h3>
+                    <p>Dovremmo sforzarci di usare le parole italiane (come "scorrere" invece di "scrollare"), oppure è naturale che la lingua della tecnologia diventi la lingua dominante?</p>
+                </div>
+            </section>
+            
+            <!-- Sezione 7: Riflessioni -->
+            <section id="reflection" class="content-section">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4">🤔 Discussione Finale</h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    Il linguaggio che usate oggi è un mix potentissimo: è **veloce**, **visivo** e **globale**. Non è né "giusto" né "sbagliato", è semplicemente diverso. Ora tocca a te riflettere.
+                </p>
+
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card">
+                        <h3 class="text-xl font-semibold text-sky-800 mb-3">1. Pro e Contro</h3>
+                        <p class="text-gray-700">Qual è la cosa **migliore** e la cosa **peggiore** nell'evoluzione del linguaggio negli ultimi 5 anni?</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card">
+                        <h3 class="text-xl font-semibold text-sky-800 mb-3">2. Il Futuro</h3>
+                        <p class="text-gray-700">Tra altri 5 anni, quale strumento o *trend* pensi che cambierà di nuovo radicalmente il nostro modo di comunicare?</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg interactive-card">
+                        <h3 class="text-xl font-semibold text-sky-800 mb-3">3. "Switching Code" (Cambiare Codice)</h3>
+                        <p class="text-gray-700">Siete bravi a "cambiare codice"? Riuscite a passare facilmente da un linguaggio iper-abbreviato con gli amici (es. chat) a un italiano formale e corretto in un'interrogazione o in un compito?</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const navigationLinks = document.querySelectorAll('#navigation .nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function showSection(targetId) {
+                contentSections.forEach(section => {
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+
+                navigationLinks.forEach(link => {
+                    if (link.dataset.target === targetId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            navigationLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.dataset.target;
+                    showSection(targetId);
+                    window.location.hash = this.hash;
+                });
+            });
+
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                showSection(hash);
+            } else {
+                showSection('intro');
+            }
+
+            const quizContainers = document.querySelectorAll('.quiz-options');
+            quizContainers.forEach(container => {
+                const options = container.querySelectorAll('.quiz-option');
+                const feedbackEl = container.nextElementSibling;
+                const correctOption = container.dataset.correct;
+
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const selectedOption = this.dataset.option;
+                        
+                        options.forEach(opt => {
+                            opt.style.borderWidth = '1px';
+                            opt.style.borderColor = '#e5e7eb';
+                        });
+                        
+                        this.style.borderWidth = '2px';
+
+                        if (selectedOption === correctOption) {
+                            feedbackEl.textContent = 'Corretto!';
+                            feedbackEl.className = 'quiz-feedback correct';
+                            this.style.borderColor = '#22c55e';
+                        } else {
+                            feedbackEl.textContent = 'Riprova. L\'alternativa italiana è più comune di quanto pensi!';
+                            feedbackEl.className = 'quiz-feedback incorrect';
+                            this.style.borderColor = '#ef4444';
+                        }
+                    });
+                });
+            });
+
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.font.size = 13;
+            Chart.defaults.color = '#374151';
+
+            new Chart(document.getElementById('fastTextChart'), {
+                type: 'radar',
+                data: {
+                    labels: ['Efficienza (Velocità)', 'Rischio Grammaticale', 'Sforzo Cognitivo', 'Globalità', 'Formalità'],
+                    datasets: [
+                        {
+                            label: 'Abbreviazioni (cmq, xké)',
+                            data: [9, 8, 3, 2, 1],
+                            fill: true,
+                            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                            borderColor: 'rgb(56, 189, 248)',
+                            pointBackgroundColor: 'rgb(56, 189, 248)',
+                        },
+                        {
+                            label: 'Acronimi (LOL, POV)',
+                            data: [7, 4, 2, 8, 3],
+                            fill: true,
+                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            borderColor: 'rgb(239, 68, 68)',
+                            pointBackgroundColor: 'rgb(239, 68, 68)',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#d1d5db' },
+                            grid: { color: '#e5e7eb' },
+                            pointLabels: { font: { size: 14 } },
+                            ticks: { display: false, backdropColor: 'transparent', stepSize: 2 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('visualChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Testo', 'Emoji', 'GIF/Meme'],
+                    datasets: [{
+                        label: 'Composizione Messaggio',
+                        data: [50, 30, 20],
+                        backgroundColor: ['#0ea5e9', '#facc15', '#a855f7'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } }
+                    }
+                }
+            });
+            
+            new Chart(document.getElementById('socialChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Nascita', 'Settimana 1', 'Settimana 2 (Picco)', 'Settimana 3', 'Morte'],
+                    datasets: [{
+                        label: 'Popolarità di un "Trend"',
+                        data: [1, 15, 100, 40, 5],
+                        fill: true,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { title: { display: true, text: 'Popolarità (illustrativa)' } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('voiceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Testo Scritto', 'Messaggio Audio'],
+                    datasets: [{
+                        label: 'Espressione Tono/Emozione',
+                        data: [4, 9],
+                        backgroundColor: '#38bdf8',
+                    }, {
+                        label: 'Velocità (Invio)',
+                        data: [6, 9],
+                        backgroundColor: '#22c55e',
+                    }, {
+                        label: 'Velocità (Ricezione)',
+                        data: [9, 3],
+                        backgroundColor: '#ef4444',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: { stacked: true, title: { display: true, text: 'Valore Concettuale (1-10)' } },
+                        y: { stacked: true }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                title: (c) => `Valutazione per: ${c[0].label}`
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

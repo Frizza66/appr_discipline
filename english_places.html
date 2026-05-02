@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Explorer - Learn English</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 12px;
+            background: #cbd5e1;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .city-slot {
+            aspect-ratio: 1;
+            background: #f8fafc;
+            border: 3px dashed #94a3b8;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .fixed-place {
+            background: #e2e8f0;
+            border: 3px solid #64748b;
+            cursor: not-allowed;
+        }
+
+        .place-card {
+            background: #ffffff;
+            border: 2px solid #3b82f6;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: grab;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 120px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .place-card:active { cursor: grabbing; }
+
+        .correct { background-color: #dcfce7 !important; border-color: #22c55e !important; border-style: solid; }
+        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; border-style: solid; }
+        
+        .slot-label {
+            position: absolute;
+            bottom: 4px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">🏙️ City Explorer</h1>
+            <p class="text-gray-600 italic">Ripassa i posti della città e le direzioni in inglese!</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center space-x-2 mb-8">
+            <button onclick="showSection('vocab')" id="btn-vocab" class="tab-btn bg-blue-500 text-white px-6 py-2 rounded-full font-semibold shadow-md transition">Vocabolario</button>
+            <button onclick="showSection('grammar')" id="btn-grammar" class="tab-btn bg-white text-blue-500 px-6 py-2 rounded-full font-semibold shadow-md transition border border-blue-500">Grammatica</button>
+            <button onclick="showSection('game')" id="btn-game" class="tab-btn bg-white text-blue-500 px-6 py-2 rounded-full font-semibold shadow-md transition border border-blue-500">Mappa Interattiva</button>
+        </div>
+
+        <!-- SECTION: VOCABULARY -->
+        <section id="vocab" class="section-content">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🏥</span>
+                    <h3 class="font-bold mt-2">Hospital</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">📚</span>
+                    <h3 class="font-bold mt-2">Library</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🎥</span>
+                    <h3 class="font-bold mt-2">Cinema</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🌳</span>
+                    <h3 class="font-bold mt-2">Park</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🏫</span>
+                    <h3 class="font-bold mt-2">School</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🚉</span>
+                    <h3 class="font-bold mt-2">Train Station</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🛒</span>
+                    <h3 class="font-bold mt-2">Supermarket</h3>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow text-center transform hover:scale-105 transition">
+                    <span class="text-4xl">🏛️</span>
+                    <h3 class="font-bold mt-2">Museum</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GRAMMAR -->
+        <section id="grammar" class="section-content hidden">
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-l-8 border-blue-500">
+                    <h2 class="text-2xl font-bold mb-4">📍 Prepositions of Place</h2>
+                    <ul class="space-y-3">
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">Next to</span> Accanto a</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">Between</span> Tra (due cose)</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">Opposite</span> Di fronte a</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">Behind</span> Dietro</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">On the left</span> A sinistra</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded mr-3 font-mono">On the right</span> A destra</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border-l-8 border-green-500">
+                    <h2 class="text-2xl font-bold mb-4">🚦 Directions</h2>
+                    <ul class="space-y-3">
+                        <li>⬅️ <span class="font-bold">Turn left</span>: Gira a sinistra</li>
+                        <li>➡️ <span class="font-bold">Turn right</span>: Gira a destra</li>
+                        <li>⬆️ <span class="font-bold">Go straight on</span>: Vai dritto</li>
+                        <li>🔄 <span class="font-bold">Take the second right</span>: Prendi la seconda a destra</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GAME -->
+        <section id="game" class="section-content hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Clues column -->
+                    <div class="md:w-1/3">
+                        <h2 class="text-xl font-bold mb-4 text-blue-700">🕵️ Mission: Build the Town</h2>
+                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-sm space-y-4">
+                            <p>Guarda i posti già presenti (grigi) e segui gli indizi:</p>
+                            <ol class="list-decimal ml-4 space-y-3 font-medium">
+                                <li>The <strong>School</strong> is <span class="text-blue-600">next to</span> the Hospital.</li>
+                                <li>The <strong>Cinema</strong> is <span class="text-blue-600">between</span> the School and the Library.</li>
+                                <li>The <strong>Library</strong> is <span class="text-blue-600">on the right</span> of the Cinema.</li>
+                                <li>The <strong>Park</strong> is <span class="text-blue-600">opposite</span> the Hospital.</li>
+                                <li>The <strong>Supermarket</strong> is <span class="text-blue-600">next to</span> the Park, <span class="text-blue-600">opposite</span> the School.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Map column -->
+                    <div class="md:w-2/3">
+                        <div class="flex flex-wrap gap-2 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200" id="draggable-container">
+                            <!-- Draggable cards will be here -->
+                        </div>
+
+                        <div class="city-grid" id="drop-zone-grid">
+                            <!-- 8 slots (2 rows of 4) -->
+                            <!-- Row 1 -->
+                            <div class="city-slot fixed-place" id="slot-0">
+                                <span class="text-3xl">🏥</span>
+                                <span class="font-bold text-xs">Hospital</span>
+                            </div>
+                            <div class="city-slot" data-index="1" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot A</span>
+                            </div>
+                            <div class="city-slot" data-index="2" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot B</span>
+                            </div>
+                            <div class="city-slot" data-index="3" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot C</span>
+                            </div>
+                            <!-- Row 2 -->
+                            <div class="city-slot" data-index="4" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot D</span>
+                            </div>
+                            <div class="city-slot" data-index="5" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot E</span>
+                            </div>
+                            <div class="city-slot fixed-place" id="slot-6">
+                                <span class="text-3xl">🚉</span>
+                                <span class="font-bold text-xs">Train Station</span>
+                            </div>
+                            <div class="city-slot" data-index="7" ondragover="allowDrop(event)" ondrop="drop(event)">
+                                <span class="slot-label">Slot F</span>
+                            </div>
+                        </div>
+
+                        <button onclick="checkAnswers()" class="mt-6 w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition shadow-lg flex items-center justify-center gap-2">
+                            <span>✅</span> CONTROLLA RISPOSTE
+                        </button>
+                        <div id="result-message" class="mt-4 text-center font-bold text-lg hidden p-3 rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Game Configuration
+        const movablePlaces = [
+            { id: 'school', name: '🏫 School', correctSlot: 1 },
+            { id: 'cinema', name: '🎥 Cinema', correctSlot: 2 },
+            { id: 'library', name: '📚 Library', correctSlot: 3 },
+            { id: 'park', name: '🌳 Park', correctSlot: 4 },
+            { id: 'supermarket', name: '🛒 Supermarket', correctSlot: 5 }
+        ];
+
+        let currentAssignments = {};
+
+        function showSection(id) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('bg-white', 'text-blue-500');
+            });
+            const activeBtn = document.getElementById('btn-' + id);
+            activeBtn.classList.add('bg-blue-500', 'text-white');
+            activeBtn.classList.remove('bg-white', 'text-blue-500');
+        }
+
+        function initGame() {
+            const container = document.getElementById('draggable-container');
+            const shuffled = [...movablePlaces].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(place => {
+                const el = document.createElement('div');
+                el.className = 'place-card';
+                el.id = place.id;
+                el.draggable = true;
+                el.innerText = place.name;
+                el.ondragstart = (e) => e.dataTransfer.setData('text', e.target.id);
+                container.appendChild(el);
+            });
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const placeId = e.dataTransfer.getData('text');
+            const slot = e.currentTarget;
+            const card = document.getElementById(placeId);
+
+            // Se lo slot è già occupato da un'altra card, non fare nulla o sposta la card precedente
+            if (slot.querySelector('.place-card')) return;
+
+            // Rimuovi label se presente
+            const label = slot.querySelector('.slot-label');
+            if (label) label.style.opacity = "0";
+
+            slot.appendChild(card);
+            currentAssignments[placeId] = parseInt(slot.dataset.index);
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            const resultMsg = document.getElementById('result-message');
+            
+            movablePlaces.forEach(p => {
+                const slot = document.querySelector(`.city-slot[data-index="${p.correctSlot}"]`);
+                const cardInSlot = slot.querySelector(`#${p.id}`);
+                
+                if (cardInSlot) {
+                    slot.classList.add('correct');
+                    slot.classList.remove('wrong');
+                    correctCount++;
+                } else {
+                    // Cerca dove è finita la card e segna errore sullo slot sbagliato
+                    const currentSlotIdx = currentAssignments[p.id];
+                    if (currentSlotIdx !== undefined) {
+                        const wrongSlot = document.querySelector(`.city-slot[data-index="${currentSlotIdx}"]`);
+                        wrongSlot.classList.add('wrong');
+                        wrongSlot.classList.remove('correct');
+                    }
+                }
+            });
+
+            resultMsg.classList.remove('hidden');
+            if (correctCount === movablePlaces.length) {
+                resultMsg.innerText = "Excellent! You are a great City Planner! 🌟";
+                resultMsg.className = "mt-4 text-center font-bold text-lg text-green-700 bg-green-100 p-3 rounded-lg";
+            } else {
+                resultMsg.innerText = `Keep trying! Hai posizionato correttamente ${correctCount} edifici su ${movablePlaces.length}.`;
+                resultMsg.className = "mt-4 text-center font-bold text-lg text-red-700 bg-red-100 p-3 rounded-lg";
+            }
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>

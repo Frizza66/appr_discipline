@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ada Lovelace: La prima programmatrice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 1.5rem;
+        }
+        .header {
+            background-color: #3b82f6;
+            color: white;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            border-radius: 1rem;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .nav-menu {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f0f4f8;
+            padding: 1rem 0;
+            border-bottom: 2px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .nav-links a {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .nav-links a:hover {
+            background-color: #e2e8f0;
+            color: #3b82f6;
+        }
+        .section {
+            background-color: white;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            animation: slideInUp 0.8s ease-out;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        .external-links a {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .external-links a:hover {
+            text-decoration: underline;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-menu.active .nav-links {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="header">
+        <h1 class="text-4xl font-extrabold mb-2">Ada Lovelace</h1>
+        <p class="text-xl font-light">La prima programmatrice della storia</p>
+    </header>
+
+    <div class="nav-menu">
+        <div class="container flex justify-between items-center">
+            <span class="text-xl font-bold text-gray-800">Menu</span>
+            <nav class="nav-links">
+                <a href="#biografia" class="font-medium text-gray-700">Biografia</a>
+                <a href="#contributi" class="font-medium text-gray-700">I suoi contributi</a>
+                <a href="#collaborazioni" class="font-medium text-gray-700">Collaborazioni</a>
+                <a href="#curiosita" class="font-medium text-gray-700">Curiosità</a>
+                <a href="#galleria" class="font-medium text-gray-700">Galleria</a>
+                <a href="#collegamenti" class="font-medium text-gray-700">Collegamenti Esterni</a>
+            </nav>
+        </div>
+    </div>
+
+    <main class="container">
+        
+        <section id="biografia" class="section">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Biografia: Dalla matematica alla poesia</h2>
+            <p class="text-gray-700 mb-4">
+                Augusta Ada Byron, Contessa di Lovelace, nasce il 10 dicembre 1815 a Londra. Figlia del famoso poeta Lord Byron e di Anne Isabella Milbanke, la sua educazione fu rigorosa e si concentrò sulla matematica e la scienza, discipline che la madre considerava l'antidoto alla "follia poetica" del padre. Sin da giovane, Ada mostrò un'incredibile passione per i numeri e la logica, sognando di creare una "scienza dei numeri" che unisse il rigore matematico alla creatività.
+            </p>
+            <p class="text-gray-700">
+                Nonostante le sfide personali e di salute, continuò i suoi studi con l'aiuto di importanti mentori, tra cui lo scienziato Mary Somerville. Questo percorso la preparò per l'incontro che avrebbe cambiato la sua vita e la storia dell'informatica.
+            </p>
+        </section>
+
+        <section id="contributi" class="section">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">I suoi contributi: Il primo algoritmo</h2>
+            <p class="text-gray-700 mb-4">
+                <img src="https://placehold.co/400x300/60a5fa/ffffff?text=Ritratto+di+Ada" alt="Ritratto di Ada Lovelace" class="float-right ml-4 mb-4 rounded-lg shadow-md">
+                Il contributo più significativo di Ada Lovelace all'informatica arrivò nel 1843, quando tradusse in inglese un articolo sul "motore analitico" di Charles Babbage. Non si limitò a una semplice traduzione; aggiunse delle sue note, molto più estese dell'articolo originale, che contenevano un'intuizione geniale.
+            </p>
+            <p class="text-gray-700">
+                Nelle sue note, Ada non vedeva il motore analitico solo come un semplice calcolatore numerico, ma come una macchina in grado di manipolare simboli, musica e arte. Descrisse in dettaglio un algoritmo, una sequenza di istruzioni, per calcolare i numeri di Bernoulli, rendendola la prima persona a scrivere un programma per un computer, anche se la macchina non venne mai costruita. Questa visione la rende la vera fondatrice della programmazione moderna.
+            </p>
+        </section>
+
+        <section id="collaborazioni" class="section">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">La collaborazione con Charles Babbage</h2>
+            <p class="text-gray-700 mb-4">
+                Ada Lovelace e Charles Babbage, un matematico e inventore, condivisero una profonda amicizia e una forte collaborazione intellettuale. Babbage progettò il motore analitico, una macchina complessa che è considerata il predecessore del computer moderno.
+            </p>
+            <p class="text-gray-700">
+                Mentre Babbage si concentrava sulla costruzione fisica della macchina, Ada vide il suo potenziale teorico. La loro corrispondenza e le loro discussioni sono una testimonianza del loro rapporto unico, basato sulla reciproca stima e sulla passione per l'innovazione. È stato il genio visionario di Ada a trasformare l'idea di una macchina da calcolo in un concetto molto più ampio, quello di un computer universale.
+            </p>
+        </section>
+
+        <section id="curiosita" class="section">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Curiosità su Ada Lovelace</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>Non conobbe mai suo padre, Lord Byron, che lasciò la famiglia poco dopo la sua nascita.</li>
+                <li>Sognava di creare un "calcolo poetico", una sintesi tra arte e scienza.</li>
+                <li>Il linguaggio di programmazione Ada, creato per il Dipartimento della Difesa degli Stati Uniti, è stato chiamato così in suo onore.</li>
+                <li>Oggi, il secondo martedì di ottobre si celebra l'**Ada Lovelace Day**, una giornata internazionale per celebrare le donne nella scienza, tecnologia, ingegneria e matematica (STEM).</li>
+            </ul>
+        </section>
+        
+        <section id="galleria" class="section">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Galleria di immagini</h2>
+            <div class="gallery">
+                <img src="https://placehold.co/600x400/93c5fd/ffffff?text=Ritratto+di+Ada+Lovelace" alt="Ritratto di Ada Lovelace">
+                <img src="https://placehold.co/600x400/bfdbfe/ffffff?text=Motore+Analitico" alt="Disegno del motore analitico di Babbage">
+                <img src="https://placehold.co/600x400/3b82f6/ffffff?text=Diagramma+dell'algoritmo" alt="Schizzo del primo algoritmo di Ada Lovelace">
+                <img src="https://placehold.co/600x400/60a5fa/ffffff?text=Charles+Babbage" alt="Ritratto di Charles Babbage">
+                <img src="https://placehold.co/600x400/93c5fd/ffffff?text=Motore+delle+differenze" alt="Modello del motore delle differenze">
+            </div>
+        </section>
+
+        <section id="collegamenti" class="section external-links">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Collegamenti esterni</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><a href="https://it.wikipedia.org/wiki/Ada_Lovelace" target="_blank">Wikipedia: Ada Lovelace</a> - Una fonte completa sulla sua vita e opera.</li>
+                <li><a href="https://www.nationalgeographic.it/storia/2021/04/13/news/ada_lovelace_la_prima_programmatrice_della_storia-5658097/" target="_blank">National Geographic: Ada Lovelace, la prima programmatrice</a> - Approfondimento su National Geographic.</li>
+                <li><a href="https://www.computerhistory.org/babbage/" target="_blank">The Computer History Museum: Babbage Engine</a> - Per vedere da vicino il progetto di Babbage (in inglese).</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-gray-600 text-sm">
+        <p>Progetto didattico realizzato per lo studio di Ada Lovelace.</p>
+    </footer>
+
+</body>
+</html>

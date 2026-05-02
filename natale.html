@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esplora il Natale: Origini e Tradizioni</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Calore Natalizio (Sfondo: #FFFAF0, Testo: #44403C, Titoli: #991B1B, Accenti: #DC2626) -->
+    <!-- Application Structure Plan: Struttura a singola pagina (SPA) con scorrimento verticale e una barra di navigazione fissa (sticky) in alto. Le sezioni (Intro, Origini, Tradizioni, Curiosità) sono accessibili tramite link di ancoraggio per uno scorrimento fluido. Questa struttura è stata scelta perché trasforma una presentazione lineare (slide) in un'esperienza di esplorazione non lineare, più adatta al web. La sezione "Tradizioni" utilizza un layout a griglia di card per suddividere logicamente i contenuti (Presepe, Cibo, Figure), migliorando la leggibilità e l'interazione. -->
+    <!-- Visualization & Content Choices: 1. Info: Intro keywords/temi -> Scopo: Informare/Visualizzare temi -> Metodo: Donut Chart (Chart.js) -> Interazione: Hover tooltip -> Giustificazione: Visualizza la composizione tematica del Natale (religione, folclore, famiglia) in modo più coinvolgente del testo. 2. Info: Tradizioni (Presepe, Cibo, Befana) -> Scopo: Organizzare -> Metodo: Grid di Card (HTML/Tailwind) -> Interazione: Layout non lineare -> Giustificazione: Suddivide blocchi di testo lunghi in segmenti tematici digeribili. 3. Info: Curiosità -> Scopo: Organizzare -> Metodo: Grid di Card (HTML/Tailwind) -> Giustificazione: Separa i fatti divertenti. CONFERMA: NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'natale-bg': '#FFFAF0',
+                        'natale-text': '#44403C',
+                        'natale-header': '#991B1B',
+                        'natale-accent': '#B91C1C',
+                        'natale-card': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            @apply px-3 py-2 rounded-md text-sm font-medium text-natale-text hover:text-natale-header hover:bg-red-50 transition-colors;
+        }
+    </style>
+</head>
+<body class="bg-natale-bg text-natale-text antialiased">
+
+    <header class="sticky top-0 bg-white/80 backdrop-blur-md shadow-sm z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-natale-header">
+                Esplora il Natale
+            </div>
+            <div class="hidden md:flex space-x-4">
+                <a href="#intro" class="nav-link">Introduzione</a>
+                <a href="#origini" class="nav-link">Origini</a>
+                <a href="#tradizioni" class="nav-link">Tradizioni Italiane</a>
+                <a href="#curiosita" class="nav-link">Curiosità</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="border border-gray-300 rounded-md p-2 text-natale-text bg-white">
+                    <option value="#intro">Introduzione</option>
+                    <option value="#origini">Origini</option>
+                    <option value="#tradizioni">Tradizioni</option>
+                    <option value="#curiosita">Curiosità</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="intro" class="mb-16 pt-12">
+            <div class="text-center mb-12">
+                <h1 class="text-5xl font-bold text-natale-header mb-4">Il Natale</h1>
+                <p class="text-xl text-natale-text max-w-3xl mx-auto">
+                    Una festa di luce, famiglia e rinascita, celebrata il 25 Dicembre. Commemora la nascita di Gesù Cristo, ma le sue radici affondano in antiche feste pagane legate al ciclo del sole.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-natale-header mb-4">Gli Aspetti del Natale</h2>
+                    <p class="text-lg mb-6">
+                        Questa sezione introduce i temi fondamentali del Natale. Il report evidenzia come la festa moderna sia un affascinante intreccio di diversi elementi: la fede religiosa, le antiche tradizioni pagane legate alla natura, il folclore popolare e il valore centrale della famiglia e del dono. Il grafico visualizza come questi componenti contribuiscano a creare la festa che conosciamo oggi.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-red-100 text-natale-header text-sm font-medium px-4 py-2 rounded-full">Rinascita</span>
+                        <span class="bg-red-100 text-natale-header text-sm font-medium px-4 py-2 rounded-full">Luce</span>
+                        <span class="bg-red-100 text-natale-header text-sm font-medium px-4 py-2 rounded-full">Famiglia</span>
+                        <span class="bg-red-100 text-natale-header text-sm font-medium px-4 py-2 rounded-full">Dono</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="introChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-red-200">
+
+        <section id="origini" class="mb-16 pt-12">
+            <h2 class="text-4xl font-bold text-natale-header text-center mb-6">Le Origini Storiche</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-12">
+                Prima di essere una festa cristiana, il 25 Dicembre era un momento cruciale per molte culture antiche. Questa sezione esplora le radici pagane della festa, in particolare la celebrazione romana del "Sol Invictus", e spiega come e perché la Chiesa scelse questa data simbolica per celebrare la nascita di Gesù.
+            </p>
+
+            <div class="bg-natale-card p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-natale-accent mb-4">Sol Invictus (Sole Invitto)</h3>
+                <ul class="space-y-4 text-lg">
+                    <li>
+                        <strong class="text-natale-text">La Data:</strong> Originariamente, il 25 Dicembre era la data in cui si celebrava la festa romana del *Sol Invictus*.
+                    </li>
+                    <li>
+                        <strong class="text-natale-text">Significato Pagano:</strong> Dopo il giorno più corto dell'anno (solstizio d'inverno, 21 Dicembre), il "Sole Invitto" ricominciava la sua ascesa, simboleggiando la vittoria della Luce sulle Tenebre.
+                    </li>
+                    <li>
+                        <strong class="text-natale-text">La Scelta Cristiana:</strong> Nel IV secolo d.C., la Chiesa scelse questa data per celebrare la nascita di Gesù, sovrapponendo il culto del "Sole di Giustizia" (Cristo) all'antica tradizione pagana, facilitandone l'accettazione.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-red-200">
+
+        <section id="tradizioni" class="mb-16 pt-12">
+            <h2 class="text-4xl font-bold text-natale-header text-center mb-6">Tradizioni Italiane</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-12">
+                L'Italia ha un patrimonio di tradizioni natalizie incredibilmente ricco e variegato. In questa sezione esploriamo tre pilastri del Natale italiano: l'arte del Presepe, le complesse regole della gastronomia (dalla Vigilia al pranzo) e le figure mitiche che portano i doni, da Babbo Natale alla Befana.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="bg-natale-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <h3 class="text-2xl font-bold text-natale-accent mb-4">Il Presepe</h3>
+                    <ul class="space-y-3 text-base flex-grow">
+                        <li><strong>Origine:</strong> Introdotto da <strong>San Francesco d'Assisi</strong> nel 1223 a Greccio (Lazio), come rievocazione vivente.</li>
+                        <li><strong>Sviluppo:</strong> Divenne un'arte popolare soprattutto a Napoli nel XVIII secolo, arricchendosi di personaggi della vita quotidiana.</li>
+                        <li><strong>Elementi Fissi:</strong> Sacra Famiglia, Bue e Asinello, Pastori, e i Magi (che arrivano il 6 Gennaio).</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-natale-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <h3 class="text-2xl font-bold text-natale-accent mb-4">Cenone e Pranzo</h3>
+                    <ul class="space-y-3 text-base flex-grow">
+                        <li><strong>Vigilia (24/12):</strong> Tradizionalmente "di magro" (senza carne), con protagonisti pesce e verdure.</li>
+                        <li><strong>Pranzo (25/12):</strong> Un'esplosione di sapori regionali, spesso con pasta ripiena (es. tortellini) e carni elaborate.</li>
+                        <li><strong>I Dolci Simbolo:</strong> L'eterna "sfida" tra <strong>Pandoro</strong> (Verona) e <strong>Panettone</strong> (Milano).</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-natale-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <h3 class="text-2xl font-bold text-natale-accent mb-4">Figure e Doni</h3>
+                    <ul class="space-y-3 text-base flex-grow">
+                        <li><strong>Babbo Natale:</strong> In Italia, porta i doni principali la mattina del 25 Dicembre.</li>
+                        <li><strong>Epifania (6/01):</strong> Arrivo dei Re Magi. È la festa della <strong>Befana</strong>, una "strega" benevola che riempie le calze.</li>
+                        <li><strong>Calze:</strong> La Befana porta dolci ai bambini buoni e carbone (simbolico) a quelli monelli.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-red-200">
+
+        <section id="curiosita" class="mb-16 pt-12">
+            <h2 class="text-4xl font-bold text-natale-header text-center mb-6">Curiosità Natalizie</h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-12">
+                Oltre alle tradizioni principali, il Natale è ricco di storie affascinanti e usanze bizzarre. Qui approfondiamo la sorprendente evoluzione di Babbo Natale, da vescovo turco a icona globale, ed esploriamo alcune strane tradizioni provenienti da altri paesi.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="bg-natale-card p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-natale-accent mb-4">Babbo Natale: Dall'Icona Rossa</h3>
+                    <ul class="space-y-3 text-base">
+                        <li><strong>San Nicola di Bari:</strong> La figura deriva da San Nicola, un generoso vescovo del IV secolo.</li>
+                        <li><strong>Santa Claus:</strong> I coloni olandesi (*Sinterklaas*) portarono la sua storia in America, dove divenne Santa Claus.</li>
+                        <li><strong>L'Immagine Moderna:</strong> L'iconografia con abito rosso e barba bianca fu fortemente plasmata dalle pubblicità della Coca-Cola negli anni '30.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-natale-card p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-natale-accent mb-4">Curiosità dal Mondo</h3>
+                    <ul class="space-y-3 text-base">
+                        <li><strong>Germania:</strong> Si nasconde un ornamento a forma di cetriolo sottaceto sull'albero; chi lo trova riceve un regalo extra.</li>
+                        <li><strong>Norvegia:</strong> La sera della Vigilia si nascondono tutte le scope per impedire alle streghe e agli spiriti maligni di rubarle.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 mt-12 border-t border-red-200">
+        <p class="text-natale-text">Applicazione interattiva basata sul report "Presentazione Natale".</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const ctx = document.getElementById('introChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tradizione Religiosa', 'Tradizioni Pagane', 'Folclore Popolare', 'Famiglia e Doni'],
+                    datasets: [{
+                        label: 'Aspetti del Natale',
+                        data: [30, 20, 25, 25],
+                        backgroundColor: [
+                            '#991B1B', 
+                            '#B91C1C', 
+                            '#DC2626', 
+                            '#F87171'  
+                        ],
+                        borderColor: '#FFFAF0',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#44403C',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            
+            document.querySelectorAll('.nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', function(e) {
+                const targetId = this.value;
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
